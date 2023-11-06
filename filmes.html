@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="etec-c">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CineTec - Cadastro de Filmes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon/favicon-16x16.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+        integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<style>
+      body {
+      background: linear-gradient(135deg, #0d0d0d, #04091d9d);
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+</style>
+<body>
+    <div id="menu"></div>
+    <div class="container">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Código:</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Código" id="codigo" maxlength="6"
+                                autocomplete="off" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Título:</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Título" id="titulo" maxlength="100"
+                                autocomplete="off" aria-autocomplete="list">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Classificação:</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Classificação" id="classificacao"
+                                autocomplete="off" aria-autocomplete="list">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Duração:</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Duração" id="duracao" maxlength="50"
+                                autocomplete="off" aria-autocomplete="list">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Gênero:</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Gênero" id="genero" maxlength="50"
+                                autocomplete="off" aria-autocomplete="list">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Sinopse:</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Sinopse" id="sinopse" maxlength="500"
+                                autocomplete="off" aria-autocomplete="list">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <label class="label">Foto:</label>
+                    <div class="file has-name is-fullwidth">
+                        <label class="file-label">
+                            <input class="file-input" type="file" name="fil_foto" id="fil_foto">
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                    <i class="fas fa-upload"></i>
+                                </span>
+                                <span class="file-label">
+                                    Escolher arquivo...
+                                </span>
+                            </span>
+                            <span class="file-name" id="foto-name">
+                                Nenhum arquivo selecionado.
+                            </span>
+                        </label>
+                    </div>
+                    <div id="foto-preview"></div>
+                </div>
+                <div class="column">
+                    <br>
+                    <button class="button is-danger is-rounded" onclick="gravar()">Gravar</button>
+                </div>
+            </div>
+        </div>
+        <div class="notification is-info" id="alert" style="display: none;">
+            <div id="mensagem"></div>
+            <button class="delete" id="alert_delete"></button>
+        </div>
+    </div>
+    <hr>
+    <table class="table is-fullwidth is-hoverable">
+        <thead>
+            <tr>
+                <th>Foto</th>
+                <th>Código</th>
+                <th>Título</th>
+                <th>Classificação</th>
+                <th>Duração</th>
+                <th>Gênero</th>
+                <th>Sinopse</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="tabela_filmes">
+        </tbody>
+    </table>
+    </div>
+    </div>
+    <script>
+        var codigo_alt = "";
+
+        window.addEventListener("load", (event) => {
+            $("#menu").load("template/topo.php");
+            carregarFilmes();
+        });
+
+        document.getElementById('alert_delete').addEventListener('click', () => {
+            document.getElementById('alert').style.display = "none";
+        });
+
+        function carregarFilmes() {
+            var url = 'filmes.php';
+            var tabela = '';
+
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    tabela = '';
+                    for (let item in data) {
+                        tabela += `<tr>
+            <td><img src="${data[item].foto_url}" style="max-width: 100px;"></td>
+            <td>` + data[item].id + `</td>
+            <td>` + data[item].titulo + `</td>
+            <td>` + data[item].classificacao + `</td>
+            <td>` + data[item].duracao + `</td>
+            <td>` + data[item].genero + `</td>
+            <td>` + data[item].sinopse + `</td>
+            <td>
+                <button class="button" onclick="excluirFilme('` + data[item].id + `')"><i class="fas fa-trash"></i></button>
+                <button class="button" onclick="editarFilme('` + data[item].id + `','` + data[item].titulo + `','` + data[item].classificacao + `','` + data[item].duracao + `','` + data[item].genero + `','` + data[item].sinopse + `','` + data[item].foto_url + `')"><i class="fas fa-pen"></i></button>
+                <button class="button" onclick="acessarSecao('` + data[item].id + `')"><i class="fa-solid fa-film"></i></button>
+            </tr>`;
+                    }
+                    document.getElementById("tabela_filmes").innerHTML = tabela;
+                });
+        }
+
+        function gravar() {
+            var codigo = document.getElementById("codigo").value;
+            var titulo = document.getElementById("titulo").value;
+            var classificacao = document.getElementById("classificacao").value;
+            var duracao = document.getElementById("duracao").value;
+            var genero = document.getElementById("genero").value;
+            var sinopse = document.getElementById("sinopse").value;
+            var foto = document.getElementById("fil_foto").files[0];
+
+            var formData = new FormData();
+            formData.append("codigo", codigo);
+            formData.append("titulo", titulo);
+            formData.append("classificacao", classificacao);
+            formData.append("duracao", duracao);
+            formData.append("genero", genero);
+            formData.append("sinopse", sinopse);
+            formData.append("fil_foto", foto);
+
+            var url = "";
+
+            if (codigo_alt !== "") {
+                url = 'filmes_alterar.php?codigo=' + codigo + '&titulo=' + titulo + '&classificacao=' + classificacao +
+                    '&duracao=' + duracao + '&genero=' + genero + '&sinopse=' + sinopse + '&foto=' + foto;
+            } else {
+                url = 'filmes_incluir.php';
+            }
+
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    document.getElementById("mensagem").innerHTML = data.mensagem;
+                    document.getElementById("alert").style.display = "block";
+                    carregarFilmes();
+                });
+        }
+
+        function acessarSecao(filmId) {
+            window.location.href = "sessoes.html?film_id=" + filmId;
+        }
+
+        function excluirFilme(codigo) {
+            var url = 'filmes_excluir.php?codigo=' + codigo;
+
+            if (confirm("Tem certeza que deseja excluir o Filme " + codigo + "?")) {
+                fetch(url)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        document.getElementById("mensagem").innerHTML = data.mensagem;
+                        document.getElementById("alert").style.display = "block";
+                        carregarFilmes();
+                    });
+            }
+        }
+
+        function editarFilme(codigo, titulo, classificacao, duracao, genero, sinopse, foto) {
+            codigo_alt = codigo;
+            document.getElementById("codigo").value = codigo;
+            document.getElementById("titulo").value = titulo;
+            document.getElementById("classificacao").value = classificacao;
+            document.getElementById("duracao").value = duracao;
+            document.getElementById("genero").value = genero;
+            document.getElementById("sinopse").value = sinopse;
+            document.getElementById("foto-name").innerText = "Arquivo selecionado: " + foto;
+        }
+
+        document.getElementById("fil_foto").addEventListener("change", function () {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById("foto-preview").innerHTML = '<img src="' + e.target.result + '" style="max-width: 100px;">';
+            };
+            reader.readAsDataURL(this.files[0]);
+        });
+
+    </script>
+</body>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lib/easing/easing.min.js"></script>
+<script src="lib/waypoints/waypoints.min.js"></script>
+<script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="js/main.js"></script>
+</html>

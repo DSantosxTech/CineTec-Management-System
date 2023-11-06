@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>CineTec - Cadastro de Sessões</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon/favicon-16x16.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+</head>
+<style>
+    .card-container {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        margin: 10px;
+        max-width: 300px;
+    }
+
+    .card-content {
+        padding: 10px;
+        text-align: center;
+    }
+
+    .card-content .title {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0;
+    }
+</style>
+
+<body>
+    <div id="menu"></div>
+    <div class="container">
+        <div class="box">
+            <div class="columns">
+                <div class="container">
+                    <div id="cinema"></div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Sala:</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Sala" id="sala" maxlength="14"
+                                autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Data:</label>
+                        <div class="control">
+                            <input class="input" type="date" placeholder="Data" id="data" maxlength="50"
+                                autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Hora:</label>
+                        <div class="control">
+                            <input class="input" type="time" placeholder="Hora" id="hora" maxlength="100"
+                                autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <br>
+                    <button class="button is-danger is-rounded" onclick="gravar()">Gravar</button>
+                </div>
+            </div>
+            <div class="notification is-info" id="alert" style="display: none;">
+                <div id="mensagem"></div>
+                <button class="delete" id="alert_delete"></button>
+            </div>
+        </div>
+        <hr>
+        <table class="table is-fullwidth is-hoverable">
+            <thead>
+                <tr>
+                    <th>ID Filme</th>
+                    <th>Sala</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tabela_sessoes"></tbody>
+        </table>
+    </div>
+    <script>
+        var codigoSessao = "";
+
+        window.addEventListener("load", (event) => {
+            $("#menu").load("template/topo.php");
+            carregarFilmes();
+            carregarSessoes();
+        });
+
+        document.getElementById('alert_delete').addEventListener('click', () => {
+            document.getElementById('alert').style.display = "none";
+        });
+
+        function carregarSessoes() {
+            const urlAtual = new URL(window.location.href);
+            const filmId = urlAtual.searchParams.get('film_id');
+            if (!filmId) {
+                console.error("O parâmetro 'film_id' não foi encontrado na URL.");
+                return;
+            }
+            const url = `sessoes_filmes.php?codigo=${filmId}`;
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    const tabela = data.map((item) => `
+                <tr>
+                    <td>${filmId}</td>
+                    <td>${item.sala}</td>
+                    <td>${item.data}</td>
+                    <td>${item.hora}</td>
+                    <td>
+                        <button class="button" onclick="excluirSessao('${item.id}')"><i class="fas fa-trash"></i></button>
+                        <button class="button" onclick="editarSessao('${item.id}','${filmId}','${item.sala}','${item.data}','${item.hora}')"><i class="fas fa-pen"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+                    document.getElementById("tabela_sessoes").innerHTML = tabela;
+                });
+        }
+
+        function gravar() {
+            const urlAtual = new URL(window.location.href);
+            const filmId = urlAtual.searchParams.get('film_id');
+            var sala = document.getElementById("sala").value;
+            var data = document.getElementById("data").value;
+            var hora = document.getElementById("hora").value;
+            var formData = new FormData();
+
+            formData.append('codigo', filmId);
+            formData.append('sala', sala);
+            formData.append('data', data);
+            formData.append('hora', hora);
+
+            fetch('sessoes_incluir.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    document.getElementById("mensagem").innerHTML = data.mensagem;
+                    document.getElementById("alert").style.display = "block";
+                    carregarSessoes(); // Atualiza a tabela de sessões após a inserção
+                });
+        }
+
+        function excluirSessao(id) {
+            var url = 'sessoes_excluir.php?id=' + id; // Corrigi o nome do parâmetro
+            if (confirm("Tem certeza que deseja excluir a sessão com ID " + id + "?")) {
+                fetch(url)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        document.getElementById("mensagem").innerHTML = data.mensagem;
+                        document.getElementById("alert").style.display = "block";
+                        carregarSessoes(); // Atualiza a tabela de sessões após a exclusão
+                    });
+            }
+        }
+
+
+        function editarSessao(id_sessao, id_filme, sala, data, hora) {
+            document.getElementById("sala").value = sala;
+            document.getElementById("data").value = data;
+            document.getElementById("hora").value = hora;
+            document.getElementById("sala").focus();
+
+            // Define a função de atualização ao salvar a edição
+            document.getElementById("gravar-edicao").onclick = function () {
+                var novaSala = document.getElementById("sala").value;
+                var novaData = document.getElementById("data").value;
+                var novaHora = document.getElementById("hora").value;
+                var formData = new FormData();
+
+                formData.append('id_sessao', id_sessao);
+                formData.append('filme_id', id_filme);
+                formData.append('sala', novaSala);
+                formData.append('data', novaData);
+                formData.append('hora', novaHora);
+
+                fetch('sessoes_alterar.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        document.getElementById("mensagem").innerHTML = data.mensagem;
+                        document.getElementById("alert").style.display = "block";
+                        carregarSessoes(id_filme); // Atualiza a tabela de sessões após a edição
+                    });
+            };
+        }
+
+
+        function carregarFilmes() {
+            const urlAtual = new URL(window.location.href);
+            const filmId = urlAtual.searchParams.get('film_id');
+            var url = 'filmes.php?codigo=' + filmId;
+            var tabela = '';
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    tabela = '';
+                    for (let item in data) {
+                        tabela += criarCardFilme(data[item]);
+                    }
+                    document.getElementById("cinema").innerHTML = tabela;
+                });
+        }
+
+        function criarCardFilme(data) {
+            return `
+    <div class="card-container">
+        <div class="card-image">
+            <figure class="image is-4by3">
+                <img src="${data.foto_url}">
+            </figure>
+        </div>
+        <div class="card-content">
+            <p class="title">${data.titulo}</p>
+        </div>
+    </div>
+    `;
+        }
+    </script>
+</body>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lib/easing/easing.min.js"></script>
+<script src="lib/waypoints/waypoints.min.js"></script>
+<script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="js/main.js"></script>
+</html>

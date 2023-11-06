@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name="author" content="etec-c">
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>CineTec - Cadastro de Usuários</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon/favicon-16x16.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+        integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <div id="menu"></div>
+    <div class="container">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">CPF:</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="CPF" id="cpf" maxlength="14"
+                                autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Nome:</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Nome completo" id="nome" maxlength="50"
+                                autocomplete="off" aria-autocomplete="list">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Email:</label>
+                        <div class="control">
+                            <input class="input" type="email" placeholder="Email" id="email" maxlength="100"
+                                autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Telefone:</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Telefone" id="telefone" maxlength="20"
+                                autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <br>
+                    <button class="button is-danger is-rounded" onclick="gravar()">Gravar</button>
+                </div>
+            </div>
+            <div class="notification is-info" id="alert" style="display: none;">
+                <div id="mensagem"></div>
+                <button class="delete" id="alert_delete"></button>
+            </div>
+        </div>
+        <hr>
+        <table class="table is-fullwidth is-hoverable">
+            <thead>
+                <tr>
+                    <th>CPF</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tabela_usuarios">
+
+            </tbody>
+        </table>
+    </div>
+    <script>
+        var cpf_alt = "";
+
+        window.addEventListener("load", (event) => {
+            $("#menu").load("template/topo.php");
+            carregarUsuarios();
+        });
+
+        document.getElementById('alert_delete').addEventListener('click', () => {
+            document.getElementById('alert').style.display = "none";
+        });
+
+        function carregarUsuarios() {
+            var url = 'usuarios.php';
+            var tabela = '';
+
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    tabela = '';
+                    for (let item in data) {
+                        tabela += `<tr>
+                            <td>` + data[item].cpf + `</td>
+                            <td>` + data[item].nome + `</td>
+                            <td>` + data[item].email + `</td>
+                            <td>` + data[item].telefone + `</td>
+                            <td>
+                                <button class="button" onclick="excluirUsuario('` + data[item].cpf + `')"><i class="fas fa-trash"></i></button>
+                                <button class="button" onclick="editarUsuario('` + data[item].cpf + `','` + data[item].nome + `','` + data[item].email + `','` + data[item].telefone + `')"><i class="fas fa-pen"></i></button>
+                            </td>
+                        </tr>`;
+                    }
+                    document.getElementById("tabela_usuarios").innerHTML = tabela;
+                });
+        }
+
+        function gravar() {
+            var cpf = document.getElementById("cpf").value;
+            var nome = document.getElementById("nome").value;
+            var email = document.getElementById("email").value;
+            var telefone = document.getElementById("telefone").value;
+            var url = "";
+            if (cpf_alt != "" & cpf_alt == cpf) {
+                url = 'usuarios_alterar.php?cpf=' + cpf + '&nome=' + nome + '&email=' + email + '&telefone=' + telefone;
+            } else {
+                url = 'usuarios_incluir.php?cpf=' + cpf + '&nome=' + nome + '&email=' + email + '&telefone=' + telefone;
+            }
+
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    document.getElementById("mensagem").innerHTML = data.mensagem;
+                    document.getElementById("alert").style.display = "block";
+                    carregarUsuarios();
+                });
+        }
+
+        function excluirUsuario(cpf) {
+            var url = 'usuarios_excluir.php?cpf=' + cpf;
+
+            if (confirm("Tem certeza que deseja excluir o CPF " + cpf + "?")) {
+                fetch(url)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        document.getElementById("mensagem").innerHTML = data.mensagem;
+                        document.getElementById("alert").style.display = "block";
+                        carregarUsuarios();
+                    });
+            }
+        }
+
+        function editarUsuario(cpf, nome, email, telefone) {
+            cpf_alt = cpf;
+            document.getElementById("cpf").value = cpf;
+            document.getElementById("nome").value = nome;
+            document.getElementById("email").value = email;
+            document.getElementById("telefone").value = telefone;
+            document.getElementById("nome").focus();
+        }
+    </script>
+</body>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lib/easing/easing.min.js"></script>
+<script src="lib/waypoints/waypoints.min.js"></script>
+<script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="js/main.js"></script>
+</html>

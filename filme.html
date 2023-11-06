@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="etec-c">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Correção no valor de 'IE-edge' -->
+    <title>CineTec - Cartaz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon/favicon-16x16.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #000000, #04091d9d);
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            max-width: 600px;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-content .title {
+            font-size: 1.50rem;
+            font-weight: bold;
+        }
+
+        .card-content .subtitle {
+            font-size: 1rem;
+        }
+
+        .card-content .info {
+            margin-top: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            color: black;
+        }
+
+        h1 {
+            padding: 20px;
+            font-weight: bold;
+            font-size: 20px;
+            color: black;
+        }
+
+        .card-footer {
+            background-color: #f5f5f5;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card-footer-item {
+            padding: 5px 10px;
+            background-color: #3273dc;
+            color: #fff;
+            border-radius: 5px;
+        }
+
+        .button {
+            font-weight: bold;
+            font-size: 15px;
+            padding: 20px;
+            background-color: #ad1313;
+            color: white;
+            border-radius: 20px;
+            width: 145px;
+        }
+
+        .button:hover {
+            background-color: #8a1313;
+            color: white;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="cinema"></div>
+        <div class="notification is-info" id="alert" style="display: none;">
+            <div id="mensagem"></div>
+            <button class="delete" id="alert_delete"></button>
+        </div>
+    </div>
+    <script>
+        var filmeDados = "";
+
+        window.addEventListener("load", (event) => {
+            carregarFilmes(); // Chama a função para carregar informações dos filmes
+            carregarSessoes(); // Chama a função para carregar informações das sessões
+        });
+
+        function carregarFilmes() {
+            const urlAtual = new URL(window.location.href);
+            const codigo = urlAtual.searchParams.get('codigo');
+
+            var url = 'filmes.php?codigo=' + codigo;
+            var tabela = '';
+
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    tabela = '';
+                    for (let item in data) {
+                        tabela += criarCardFilme(data[item]); // Cria cartões de filmes com os dados obtidos
+                    }
+                    document.getElementById("cinema").innerHTML = tabela; // Exibe os cartões na página
+                });
+        }
+
+        function criarCardFilme(data) {
+            // Monta o HTML para um cartão de filme com os dados fornecidos
+            return `
+        <div class="card">
+            <div class="card-content">
+                <p class="title">${data.titulo}</p>
+                <iframe width="560" height="315" src="${data.trailler}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>                </figure>
+                <div class="info">
+                    <label>Sinopse:</label> ${data.sinopse}<br>
+                    <label>Gênero:</label> ${data.genero}<br>
+                    <label>Classificação:</label> ${data.classificacao}
+                </div>
+                <h1>Escolha sua Sessão:</h1>
+                <div class="box" id="box"> <!-- Adicionei o id "box" aqui -->
+                </div>
+            </div>
+        </div>
+    `;
+        }
+
+        function carregarSessoes() {
+            const urlAtual = new URL(window.location.href);
+            const codigo = urlAtual.searchParams.get('codigo');
+
+            var url = 'sessoes_filmes.php?codigo=' + codigo;
+            var tabela = '';
+
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    tabela = '';
+                    for (let item in data) {
+                        tabela += criarCardSessoes(data[item]); // Cria cartões de sessões com os dados obtidos
+                    }
+                    document.getElementById("box").innerHTML = tabela; // Exibe os cartões de sessões na página
+                });
+        }
+
+        function criarCardSessoes(data) {
+            const urlAtual = new URL(window.location.href);
+            const codigo = urlAtual.searchParams.get('codigo');
+            // Monta o HTML para um cartão de sessão com os dados fornecidos
+            const dataBrasileira = new Date(data.data).toLocaleDateString('pt-BR');
+
+            return `
+                    <label>Sala:</label> ${data.sala}<br>
+                    <label>Data:</label> ${dataBrasileira}<br>
+                    <label>Horario:</label> ${data.hora}<br>
+                    <a class="button" href="poltrona.php?codigo=${codigo}">Comprar ingresso</a><br><br>
+    `;
+        }
+    </script>
+</body>
+
+</html>
