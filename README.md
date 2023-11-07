@@ -1,4 +1,4 @@
-#Sistema de Gestão de Cinema em PHP
+##Sistema de Gestão de Cinema em PHP
 
 Este é um sistema de gestão de cinema em PHP que permite aos administradores do cinema gerenciar sessões, filmes, ingressos e reservas de maneira eficaz.
 
