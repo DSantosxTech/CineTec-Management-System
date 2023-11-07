@@ -2,6 +2,10 @@
 
 Este é um sistema de gestão de cinema em PHP que permite aos administradores do cinema gerenciar sessões, filmes, ingressos e reservas de maneira eficaz.
 
+# Imagens do sistema 
+## Tela Inicial
+[![Tela Inicial]([https://raw.githubusercontent.com/DevSntosx71/Stop-Mario/main/src/lib/img/Come%C3%A7o.jpg](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/Index.png))
+
 # Requisitos do Sistema
 
 	•	Servidor web (por exemplo, Apache)
