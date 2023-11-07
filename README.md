@@ -5,6 +5,16 @@ Este é um sistema de gestão de cinema em PHP que permite aos administradores d
 # Imagens do sistema 
 ## Tela Inicial
 [![Tela Inicial]([https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/Index.png](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/Index.png))]
+## Tela sobre
+[![Tela Sobre]([https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/sobre.png](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/sobre.png))]
+## Tela produtos
+[![Tela Produtos]([https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/produtos.png](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/produtos.png))]
+## Tela Contatos
+[![Tela contato]([https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/contato.png](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/contato.png))]
+
+## Cadastro Filmes e sessoes
+[![Tela Filme]([https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/cadastroFilme.png](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/cadastroFilme.png))]
+[![Tela Sessoes]([https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/cadastroSessoes.png](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/cadastroSessoes.png))]
 
 # Requisitos do Sistema
 
