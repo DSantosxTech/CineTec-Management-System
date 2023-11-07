@@ -21,7 +21,7 @@ Este é um sistema de gestão de cinema em PHP que permite aos administradores d
 
 ## Sessões
 ### Cadastro de Sessões
-![Tela Sessões](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/cadastroSessoes.png)
+![Tela Sessões](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/CadastroSessoes.png)
 
 # Requisitos do Sistema
 - Servidor web (por exemplo, Apache)
