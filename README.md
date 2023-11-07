@@ -15,11 +15,15 @@ Este é um sistema de gestão de cinema em PHP que permite aos administradores d
 ### Tela Contatos
 ![Tela Contato](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/contato.png)
 
-### Cadastro de Filmes e Sessões
+## Filmes
+### Cadastro de Filmes
 ![Tela Filme](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/cadastroFilme.png)
+
+## Sessões
+### Cadastro de Sessões
 ![Tela Sessões](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/cadastroSessoes.png)
 
-## Requisitos do Sistema
+# Requisitos do Sistema
 - Servidor web (por exemplo, Apache)
 - PHP 7.x ou superior
 - MySQL 5.x ou superior
