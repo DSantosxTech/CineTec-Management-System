@@ -4,7 +4,7 @@ Este é um sistema de gestão de cinema em PHP que permite aos administradores d
 
 # Imagens do sistema 
 ## Tela Inicial
-[![Tela Inicial]([https://raw.githubusercontent.com/DevSntosx71/Stop-Mario/main/src/lib/img/Come%C3%A7o.jpg](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/Index.png))]
+[![Tela Inicial]([https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/Index.png](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/Index.png))]
 
 # Requisitos do Sistema
 
