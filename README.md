@@ -16,7 +16,7 @@ Este é um sistema de gestão de cinema em PHP que permite aos administradores d
 ### Tela Contatos
 ![Tela Contato](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/contato.png)
 
-## Filmes
+## Filme
 
 ### Cadastro de Filmes
 ![Tela Filme](https://raw.githubusercontent.com/DevSntosx71/Sistema-de-gestao-cinema/main/img/cadastroFilme.png)
